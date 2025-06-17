@@ -1,0 +1,21 @@
+spring:
+  main:
+    web-application-type: reactive
+    banner-mode: off
+  
+  data:
+    mongodb:
+      auto-index-creation: true
+      
+  webflux:
+    base-path: /api
+    
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
+    com.nequi.franchise: DEBUG
+    reactor.netty: WARN
+    
+server:
+  port: 8080  # Use random port for tests
