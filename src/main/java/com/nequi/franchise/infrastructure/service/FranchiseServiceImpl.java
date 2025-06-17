@@ -1,9 +1,10 @@
 package com.nequi.franchise.infrastructure.service;
 
 import com.nequi.franchise.application.dto.FranchiseRequest;
+import com.nequi.franchise.application.dto.FranchiseResponse;
 import com.nequi.franchise.application.service.FranchiseService;
-import com.nequi.franchise.domain.model.Franchise;
 import com.nequi.franchise.domain.repository.FranchiseRepository;
+import com.nequi.franchise.infrastructure.mapper.FranchiseMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,30 +15,38 @@ import reactor.core.publisher.Mono;
 public class FranchiseServiceImpl implements FranchiseService {
 
     private final FranchiseRepository franchiseRepository;
+    private final FranchiseMapper franchiseMapper;
 
     @Override
-    public Mono<Franchise> findById(String id) {
-        return franchiseRepository.findById(id);
-    }
-
-    @Override
-    public Flux<Franchise> findAll() {
-        return franchiseRepository.findAll();
-    }
-
-    @Override
-    public Mono<Franchise> create(Franchise franchise) {
-        return franchiseRepository.save(franchise);
-    }
-
-    @Override
-    public Mono<Franchise> update(String id, FranchiseRequest request) {
+    public Mono<FranchiseResponse> findById(String id) {
         return franchiseRepository.findById(id)
-            .flatMap(existing -> {
-                Franchise franchise = toEntity(request);
-                franchise.setId(id);
-                return franchiseRepository.save(franchise);
-            });
+                .map(franchiseMapper::toResponse);
+    }
+
+    @Override
+    public Flux<FranchiseResponse> findAll() {
+        return franchiseRepository.findAll()
+                .map(franchiseMapper::toResponse);
+    }
+
+    @Override
+    public Mono<FranchiseResponse> create(FranchiseRequest request) {
+        return Mono.just(request)
+                .map(franchiseMapper::toEntity)
+                .flatMap(franchiseRepository::save)
+                .map(franchiseMapper::toResponse);
+    }
+
+    @Override
+    public Mono<FranchiseResponse> update(String id, FranchiseRequest request) {
+        return franchiseRepository.findById(id)
+                .flatMap(existingFranchise -> {
+                    // Update the existing franchise with new data
+                    franchiseMapper.updateFromRequest(request, existingFranchise);
+                    existingFranchise.setId(id); // Ensure ID is preserved
+                    return franchiseRepository.save(existingFranchise);
+                })
+                .map(franchiseMapper::toResponse);
     }
 
     @Override

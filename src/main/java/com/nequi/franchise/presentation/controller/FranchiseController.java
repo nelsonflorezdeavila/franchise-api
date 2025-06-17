@@ -2,73 +2,167 @@ package com.nequi.franchise.presentation.controller;
 
 import com.nequi.franchise.application.dto.FranchiseRequest;
 import com.nequi.franchise.application.dto.FranchiseResponse;
-import com.nequi.franchise.application.service.FranchiseService;
 import com.nequi.franchise.infrastructure.aop.LogExecution;
 import com.nequi.franchise.infrastructure.dto.ApiResponse;
-import com.nequi.franchise.infrastructure.service.MessageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/franchises")
-@RequiredArgsConstructor
-public class FranchiseController {
+@Tag(name = "api.franchise.tag.name", description = "api.franchise.tag.description")
+public interface FranchiseController {
 
-    private final FranchiseService franchiseService;
-    private final MessageService messageService;
-
-    @GetMapping("/{id}")
+    /**
+     * Get a franchise by ID.
+     *
+     * @param id the franchise ID
+     * @return the franchise response wrapped in ApiResponse
+     */
     @LogExecution("Get franchise by ID")
-    public Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> getFranchise(@PathVariable String id) {
-        return franchiseService.findById(id)
-            .map(franchiseService::toResponse)
-            .map(franchise -> ResponseEntity.ok(ApiResponse.success(franchise)));
-    }
+    @Operation(
+            summary = "api.franchise.get.summary",
+            description = "api.franchise.get.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> getFranchise(
+            @Parameter(description = "api.franchise.get.param.id", required = true)
+            @PathVariable String id);
 
-    @GetMapping
+    /**
+     * Get all franchises.
+     *
+     * @return list of all franchises wrapped in ApiResponse
+     */
     @LogExecution("Get all franchises")
-    public Mono<ResponseEntity<ApiResponse<List<FranchiseResponse>>>> getAllFranchises() {
-        return franchiseService.findAll()
-            .map(franchiseService::toResponse)
-            .collectList()
-            .map(franchises -> ResponseEntity.ok(ApiResponse.success(franchises)));
-    }
+    @Operation(
+            summary = "api.franchise.getall.summary",
+            description = "api.franchise.getall.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<List<FranchiseResponse>>>> getAllFranchises();
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    @LogExecution(value = "Create new franchise", logParameters = true)
-    public Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> createFranchise(
-            @Valid @RequestBody FranchiseRequest request) {
-        return franchiseService.create(franchiseService.toEntity(request))
-            .map(franchiseService::toResponse)
-            .map(franchise -> ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ApiResponse.success(franchise, messageService.getMessage("franchise.created"))));
-    }
+    /**
+     * Create a new franchise.
+     *
+     * @param request the franchise creation request
+     * @return the created franchise response wrapped in ApiResponse
+     */
+    @LogExecution(value = "Create new franchise")
+    @Operation(
+            summary = "api.franchise.create.summary",
+            description = "api.franchise.create.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "201",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "api.response.badrequest"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> createFranchise(@Valid @RequestBody FranchiseRequest request);
 
-    @PutMapping("/{id}")
-    @LogExecution(value = "Update franchise", logParameters = true)
-    public Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> updateFranchise(
-            @PathVariable String id, 
-            @Valid @RequestBody FranchiseRequest request) {
-        return franchiseService.update(id, request)
-            .map(franchiseService::toResponse)
-            .map(franchise -> ResponseEntity
-                .ok(ApiResponse.success(franchise, messageService.getMessage("franchise.updated"))));
-    }
+    /**
+     * Update an existing franchise.
+     *
+     * @param id the franchise ID to update
+     * @param request the franchise update request
+     * @return the updated franchise response wrapped in ApiResponse
+     */
+    @LogExecution(value = "Update franchise")
+    @Operation(
+            summary = "api.franchise.update.summary",
+            description = "api.franchise.update.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "api.response.badrequest"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> updateFranchise(
+            @Parameter(description = "api.franchise.update.param.id", required = true)
+            @PathVariable String id, @Valid @RequestBody FranchiseRequest request);
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    /**
+     * Delete a franchise.
+     *
+     * @param id the franchise ID to delete
+     * @return success response wrapped in ApiResponse
+     */
     @LogExecution("Delete franchise")
-    public Mono<ResponseEntity<ApiResponse<Void>>> deleteFranchise(@PathVariable String id) {
-        return franchiseService.delete(id)
-            .then(Mono.just(ResponseEntity
-                .ok(ApiResponse.success(null, messageService.getMessage("franchise.deleted")))));
-    }
+    @Operation(
+            summary = "api.franchise.delete.summary",
+            description = "api.franchise.delete.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<Void>>> deleteFranchise(
+            @Parameter(description = "api.franchise.delete.param.id", required = true)
+            @PathVariable String id);
 }

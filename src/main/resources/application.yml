@@ -1,15 +1,17 @@
 spring:
   application:
     name: franchise-api
-  
-  # Message Source Configuration
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: franchise
   messages:
     basename: messages/messages
     encoding: UTF-8
     cache-duration: 3600
     fallback-to-system-locale: true
-
-  # JSON Configuration
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -23,8 +25,6 @@ spring:
     date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
     time-zone: America/Bogota
     property-naming-strategy: SNAKE_CASE
-
-# Server Configuration
 server:
   servlet:
     encoding:
@@ -35,8 +35,6 @@ server:
     enabled: true
     mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
     min-response-size: 1KB
-
-# Logging Configuration
 logging:
   level:
     org.springframework.web: INFO
@@ -53,7 +51,6 @@ logging:
       max-history: 5
       clean-history-on-start: true
 
-# API Documentation
 springdoc:
   api-docs:
     path: /v3/api-docs
@@ -62,17 +59,9 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
     doc-expansion: none
+    try-it-out-enabled: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-
-# Response Wrapper Configuration
-response:
-  wrapper:
-    enabled: true
-    message: message
-    data: data
-    error: error
-    timestamp: timestamp
 
 franchise:
   logging:
