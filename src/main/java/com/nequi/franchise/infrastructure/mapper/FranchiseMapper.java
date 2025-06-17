@@ -3,11 +3,12 @@ package com.nequi.franchise.infrastructure.mapper;
 import com.nequi.franchise.application.dto.FranchiseRequest;
 import com.nequi.franchise.application.dto.FranchiseResponse;
 import com.nequi.franchise.domain.model.Franchise;
+import com.nequi.franchise.infrastructure.config.MapStructConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper
+@Mapper(config = MapStructConfig.class)
 public interface FranchiseMapper {
     
     @Mapping(target = "id", ignore = true)

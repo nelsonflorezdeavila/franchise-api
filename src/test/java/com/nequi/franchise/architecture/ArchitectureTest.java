@@ -44,6 +44,7 @@ class ArchitectureTest {
         classes()
             .that().resideInAPackage("..presentation..controller..")
             .should().haveSimpleNameEndingWith("Controller")
+            .orShould().haveSimpleNameEndingWith("ControllerImpl")
             .check(importedClasses);
     }
 

@@ -7,11 +7,11 @@ import lombok.Builder;
 @Builder
 public record FranchiseRequest(
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must be less than 100 characters")
+    @NotBlank(message = "{validation.name.notblank}")
+    @Size(max = 100, message = "{validation.name.size}")
     String name,
     
-    @Size(max = 500, message = "Description must be less than 500 characters")
+    @Size(max = 500, message = "{validation.description.size}")
     String description,
     
     boolean active
