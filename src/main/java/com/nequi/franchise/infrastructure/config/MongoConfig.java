@@ -51,8 +51,8 @@ public class MongoConfig extends AbstractReactiveMongoConfiguration {
         return new ReactiveMongoTransactionManager(factory);
     }
 
-    @Override
     @Bean
+    @Override
     public MongoClient reactiveMongoClient() {
         if (mongoUri != null && !mongoUri.isEmpty()) {
             log.info("Connecting to MongoDB using URI");

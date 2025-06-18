@@ -1,4 +1,4 @@
-package com.nequi.franchise.infrastructure.service;
+package com.nequi.franchise.infrastructure.service.impl;
 
 import com.nequi.franchise.application.dto.FranchiseRequest;
 import com.nequi.franchise.application.dto.FranchiseResponse;
