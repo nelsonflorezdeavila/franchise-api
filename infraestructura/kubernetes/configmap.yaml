@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: franchise-config
+  namespace: franchise
+data:
+  SPRING_PROFILES_ACTIVE: "dev"
+  SPRING_DATA_MONGODB_URI: "mongodb://mongo:27017/franchise"
+  SERVER_PORT: "8080"
+  SPRING_APPLICATION_NAME: "franchise-api"

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: franchise-api
+  namespace: franchise
+  labels:
+    app: franchise-api
+spec:
+  selector:
+    app: franchise-api
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  type: ClusterIP
