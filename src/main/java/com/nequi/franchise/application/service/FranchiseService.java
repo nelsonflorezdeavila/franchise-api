@@ -51,4 +51,13 @@ public interface FranchiseService {
      * @return a Mono signaling completion
      */
     Mono<Void> delete(String id);
+
+    /**
+     * Update franchise name.
+     *
+     * @param id the franchise ID to update
+     * @param name the new franchise name
+     * @return a Mono containing the updated franchise response
+     */
+    Mono<FranchiseResponse> updateName(String id, String name);
 }

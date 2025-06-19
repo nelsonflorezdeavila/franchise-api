@@ -153,4 +153,43 @@ public class ProductServiceImpl implements ProductService {
                 .flatMap(productStockRepository::delete)
                 .then();
     }
+
+    @Override
+    public Flux<TopStockProductByBranchResponse> getTopStockProductsByFranchise(String franchiseId) {
+        return branchRepository.findByFranchiseId(franchiseId)
+                .flatMap(branch -> productStockRepository.findByBranchId(branch.getId())
+                        .flatMap(this::enrichTopStockProductResponse));
+    }
+    
+    @Override
+    public Mono<ProductResponse> updateProductName(String id, String name) {
+        return productRepository.findById(id)
+                .flatMap(existingProduct -> {
+                    existingProduct.setName(name);
+                    return productRepository.save(existingProduct);
+                })
+                .map(productMapper::toResponse);
+    }
+
+    private Mono<TopStockProductByBranchResponse> enrichTopStockProductResponse(ProductStock productStock) {
+        return Mono.zip(
+                productRepository.findById(productStock.getProductId()),
+                branchRepository.findById(productStock.getBranchId())
+        ).map(tuple -> new TopStockProductByBranchResponse(
+                tuple.getT2().getId(),
+                tuple.getT2().getName(),
+                tuple.getT2().getAddress(),
+                tuple.getT2().getCity(),
+                tuple.getT1().getId(),
+                tuple.getT1().getName(),
+                tuple.getT1().getDescription(),
+                tuple.getT1().getPrice(),
+                tuple.getT1().getCategory(),
+                productStock.getStock(),
+                productStock.getMinStock(),
+                productStock.getMaxStock(),
+                productStock.getCreatedAt(),
+                productStock.getUpdatedAt()
+        ));
+    }
 }

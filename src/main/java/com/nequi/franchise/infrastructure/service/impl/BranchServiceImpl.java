@@ -1,5 +1,6 @@
 package com.nequi.franchise.infrastructure.service.impl;
 
+import com.nequi.franchise.application.dto.BranchNameUpdateRequest;
 import com.nequi.franchise.application.dto.BranchRequest;
 import com.nequi.franchise.application.dto.BranchResponse;
 import com.nequi.franchise.application.service.BranchService;
@@ -112,5 +113,20 @@ public class BranchServiceImpl implements BranchService {
                 .filter(exists -> !exists)
                 .switchIfEmpty(Mono.error(new RuntimeException("Branch name already exists in this franchise: " + name)))
                 .then();
+    }
+
+    @Override
+    public Mono<BranchResponse> updateName(String id, BranchNameUpdateRequest request) {
+        log.debug("Updating branch name: {} with new name: {}", id, request.name());
+
+        return branchRepository.findById(id)
+                .switchIfEmpty(Mono.error(new RuntimeException("Branch not found with id: " + id)))
+                .flatMap(existingBranch -> validateUniqueBranchNameForUpdate(request.name(), id, existingBranch.getFranchiseId())
+                        .then(Mono.just(existingBranch)))
+                .doOnNext(branch -> branch.setName(request.name()))
+                .flatMap(branchRepository::save)
+                .flatMap(this::enrichBranchWithFranchise)
+                .doOnSuccess(branch -> log.debug("Updated branch name: {}", branch.id()))
+                .doOnError(error -> log.error("Error updating branch name: {}", id, error));
     }
 }

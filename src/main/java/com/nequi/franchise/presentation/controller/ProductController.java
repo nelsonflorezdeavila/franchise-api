@@ -218,4 +218,53 @@ public interface ProductController {
             @PathVariable String branchId,
             @Parameter(description = "api.product.removeFromBranch.param.productId", required = true)
             @PathVariable String productId);
+
+    @LogExecution("Get top stock products by franchise")
+    @Operation(
+            summary = "api.product.getTopStockByFranchise.summary",
+            description = "api.product.getTopStockByFranchise.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = TopStockProductByBranchResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<List<TopStockProductByBranchResponse>>>> getTopStockProductsByFranchise(
+            @Parameter(description = "api.product.getTopStockByFranchise.param.franchiseId", required = true)
+            @PathVariable String franchiseId);
+
+    @LogExecution("Update product name")
+    @Operation(
+            summary = "api.product.updateName.summary",
+            description = "api.product.updateName.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = ProductResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "api.response.badrequest"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<ProductResponse>>> updateProductName(
+            @Parameter(description = "api.product.updateName.param.id", required = true)
+            @PathVariable String id,
+            @Valid @RequestBody ProductNameUpdateRequest request);
 }

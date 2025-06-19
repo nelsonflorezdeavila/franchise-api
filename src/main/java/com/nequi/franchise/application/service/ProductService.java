@@ -31,4 +31,15 @@ public interface ProductService {
     Flux<ProductStockResponse> getLowStockProducts();
 
     Mono<Void> removeProductFromBranch(String productId, String branchId);
+
+    Flux<TopStockProductByBranchResponse> getTopStockProductsByFranchise(String franchiseId);
+
+    /**
+     * Updates the name of a product.
+     *
+     * @param id the ID of the product to update
+     * @param name the new name for the product
+     * @return a Mono containing the updated product response
+     */
+    Mono<ProductResponse> updateProductName(String id, String name);
 }

@@ -1,5 +1,6 @@
 package com.nequi.franchise.presentation.controller;
 
+import com.nequi.franchise.application.dto.BranchNameUpdateRequest;
 import com.nequi.franchise.application.dto.BranchRequest;
 import com.nequi.franchise.application.dto.BranchResponse;
 import com.nequi.franchise.infrastructure.aop.LogExecution;
@@ -204,4 +205,40 @@ public interface BranchController {
     Mono<ResponseEntity<ApiResponse<Void>>> deleteBranch(
             @Parameter(description = "api.branch.delete.param.id", required = true)
             @PathVariable String id);
+
+    /**
+     * Update the name of an existing branch.
+     *
+     * @param id the branch ID to update
+     * @param request the branch name update request
+     * @return the updated branch response wrapped in ApiResponse
+     */
+    @LogExecution(value = "Update branch name")
+    @Operation(
+            summary = "api.branch.updatename.summary",
+            description = "api.branch.updatename.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = BranchResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "api.response.badrequest"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<BranchResponse>>> updateBranchName(
+            @Parameter(description = "api.branch.updatename.param.id", required = true)
+            @PathVariable String id,
+            @Valid @RequestBody BranchNameUpdateRequest request);
 }

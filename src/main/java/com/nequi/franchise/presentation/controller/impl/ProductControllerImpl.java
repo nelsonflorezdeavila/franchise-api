@@ -5,6 +5,7 @@ import com.nequi.franchise.application.service.ProductService;
 import com.nequi.franchise.infrastructure.dto.ApiResponse;
 import com.nequi.franchise.infrastructure.utils.CustomResponseBuilder;
 import com.nequi.franchise.presentation.controller.ProductController;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,5 +80,23 @@ public class ProductControllerImpl implements ProductController {
     public Mono<ResponseEntity<ApiResponse<Void>>> removeProductFromBranch(@PathVariable String branchId, @PathVariable String productId) {
         return productService.removeProductFromBranch(productId, branchId)
                 .then(Mono.just(customResponseBuilder.deleted("product.removed.from.branch")));
+    }
+
+    @Override
+    @GetMapping("/franchises/{franchiseId}/top-stock-products")
+    public Mono<ResponseEntity<ApiResponse<List<TopStockProductByBranchResponse>>>> getTopStockProductsByFranchise(@PathVariable String franchiseId) {
+        return productService.getTopStockProductsByFranchise(franchiseId)
+                .collectList()
+                .map(customResponseBuilder::success);
+    }
+
+    @Override
+    @PatchMapping("/products/{id}/name")
+    public Mono<ResponseEntity<ApiResponse<ProductResponse>>> updateProductName(
+            @PathVariable String id, 
+            @Valid @RequestBody ProductNameUpdateRequest request) {
+        return productService.updateProductName(id, request.name())
+                .map(product -> customResponseBuilder.success(product, "product.name.updated"))
+                .defaultIfEmpty(customResponseBuilder.notFound());
     }
 }
