@@ -1,0 +1,26 @@
+---
+# Role with minimal permissions
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: franchise-api-role
+  namespace: franchise
+rules:
+- apiGroups: [""]  # Core API group
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "watch"]
+---
+# Role binding for the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: franchise-api-role-binding
+  namespace: franchise
+subjects:
+- kind: ServiceAccount
+  name: franchise-api
+  namespace: franchise
+roleRef:
+  kind: Role
+  name: franchise-api-role
+  apiGroup: rbac.authorization.k8s.io

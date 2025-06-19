@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: franchise-api
+  namespace: franchise
+  labels:
+    app: franchise-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: franchise-api
+  template:
+    metadata:
+      labels:
+        app: franchise-api
+    spec:
+      serviceAccountName: franchise-api
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+      - name: franchise-api
+        image: franchise-api:latest  # Use your actual image name
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: true
+          seccompProfile:
+            type: RuntimeDefault
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: SERVER_PORT
+          value: "8080"
+        envFrom:
+        - configMapRef:
+            name: franchise-config
+        - secretRef:
+            name: franchise-secrets
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+            ephemeral-storage: "1Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+            ephemeral-storage: "512Mi"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}

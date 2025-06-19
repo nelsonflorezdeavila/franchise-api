@@ -1,0 +1,75 @@
+---
+# MongoDB Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: franchise
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      serviceAccountName: mongo
+      automountServiceAccountToken: false
+      containers:
+      - name: mongo
+        image: mongo:5.0
+        securityContext:
+          runAsUser: 999
+          runAsGroup: 999
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop: ["ALL"]
+        ports:
+        - containerPort: 27017
+        env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: franchise-secrets
+              key: SPRING_DATA_MONGODB_USERNAME
+        - name: MONGO_INITDB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: franchise-secrets
+              key: SPRING_DATA_MONGODB_PASSWORD
+        resources:
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+            ephemeral-storage: "10Gi"
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+            ephemeral-storage: "5Gi"
+        volumeMounts:
+        - name: mongo-data
+          mountPath: /data/db
+          readOnly: false
+      volumes:
+      - name: mongo-data
+        emptyDir: {}
+---
+# MongoDB Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+  namespace: franchise
+spec:
+  selector:
+    app: mongo
+  ports:
+  - port: 27017
+    targetPort: 27017
+  type: ClusterIP

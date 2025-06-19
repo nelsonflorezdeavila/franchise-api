@@ -1,3 +1,80 @@
 spring:
   application:
     name: franchise-api
+  data:
+    mongodb:
+      auto-index-creation: true
+      host: localhost
+      port: 27017
+      database: franchise
+  messages:
+    basename: messages/messages
+    encoding: UTF-8
+    cache-duration: 3600
+    fallback-to-system-locale: true
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    time-zone: "America/Bogota"
+    deserialization:
+      fail-on-unknown-properties: false
+      accept-float-as-int: false
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+    parser:
+      include-source-in-location: true
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
+    min-response-size: 1KB
+logging:
+  level:
+    org.springframework.web: INFO
+    com.nequi.franchise: DEBUG
+    org.springframework.web.servlet.mvc.method.annotation: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: "logs/application-%d{yyyy-MM-dd}.%i.log"
+      max-file-size: 100MB
+      max-history: 5
+      clean-history-on-start: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    doc-expansion: none
+    try-it-out-enabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+franchise:
+  logging:
+    http:
+      enabled: true
+      include-headers: true
+      include-body: true
+      max-body-size: 1048576 # 1MB
+      exclude-paths:
+        - "/actuator/**"
+        - "/swagger-ui/**"
+        - "/v3/api-docs/**"
+    method:
+      enabled: true
+      log-parameters: true
+      log-result: true
+      exclude-packages: []
+
