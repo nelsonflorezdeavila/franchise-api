@@ -121,12 +121,6 @@ La documentación de la API está disponible a través de Swagger UI:
 2. Abre el navegador integrado de IntelliJ (Alt+2)
 3. Navega a `http://localhost:8080/swagger-ui.html`
 
-### Configuración de Autorización en Swagger
-Si la API requiere autenticación:
-1. Haz clic en el botón "Authorize" (candado) en la esquina superior derecha
-2. Ingresa las credenciales si es necesario
-3. Haz clic en "Authorize" para guardar la configuración
-
 ## Cobertura de Código
 
 Para generar el informe de cobertura de código con JaCoCo:
