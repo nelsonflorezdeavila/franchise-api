@@ -53,4 +53,14 @@ public class FranchiseServiceImpl implements FranchiseService {
     public Mono<Void> delete(String id) {
         return franchiseRepository.deleteById(id);
     }
+
+    @Override
+    public Mono<FranchiseResponse> updateName(String id, String name) {
+        return franchiseRepository.findById(id)
+                .flatMap(existingFranchise -> {
+                    existingFranchise.setName(name);
+                    return franchiseRepository.save(existingFranchise);
+                })
+                .map(franchiseMapper::toResponse);
+    }
 }

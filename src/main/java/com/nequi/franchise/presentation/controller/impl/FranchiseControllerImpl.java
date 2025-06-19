@@ -1,11 +1,13 @@
 package com.nequi.franchise.presentation.controller.impl;
 
+import com.nequi.franchise.application.dto.FranchiseNameUpdateRequest;
 import com.nequi.franchise.application.dto.FranchiseRequest;
 import com.nequi.franchise.application.dto.FranchiseResponse;
 import com.nequi.franchise.application.service.FranchiseService;
 import com.nequi.franchise.infrastructure.dto.ApiResponse;
 import com.nequi.franchise.infrastructure.utils.CustomResponseBuilder;
 import com.nequi.franchise.presentation.controller.FranchiseController;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -61,5 +63,15 @@ public class FranchiseControllerImpl implements FranchiseController {
     public Mono<ResponseEntity<ApiResponse<Void>>> deleteFranchise(@PathVariable String id) {
         return franchiseService.delete(id)
                 .then(Mono.just(customResponseBuilder.deleted("franchise.deleted")));
+    }
+
+    @Override
+    @PatchMapping("/{id}/name")
+    public Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> updateFranchiseName(
+            @PathVariable String id,
+            @Valid @RequestBody FranchiseNameUpdateRequest request) {
+        return franchiseService.updateName(id, request.name())
+                .map(franchise -> customResponseBuilder.success(franchise, "franchise.name.updated"))
+                .defaultIfEmpty(customResponseBuilder.notFound());
     }
 }

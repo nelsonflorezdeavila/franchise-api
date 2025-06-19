@@ -1,5 +1,6 @@
 package com.nequi.franchise.presentation.controller;
 
+import com.nequi.franchise.application.dto.FranchiseNameUpdateRequest;
 import com.nequi.franchise.application.dto.FranchiseRequest;
 import com.nequi.franchise.application.dto.FranchiseResponse;
 import com.nequi.franchise.infrastructure.aop.LogExecution;
@@ -165,4 +166,33 @@ public interface FranchiseController {
     Mono<ResponseEntity<ApiResponse<Void>>> deleteFranchise(
             @Parameter(description = "api.franchise.delete.param.id", required = true)
             @PathVariable String id);
+
+    @LogExecution(value = "Update franchise name")
+    @Operation(
+            summary = "api.franchise.updatename.summary",
+            description = "api.franchise.updatename.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success",
+                    content = @Content(schema = @Schema(implementation = FranchiseResponse.class))
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "400",
+                    description = "api.response.badrequest"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<FranchiseResponse>>> updateFranchiseName(
+            @Parameter(description = "api.franchise.updatename.param.id", required = true)
+            @PathVariable String id,
+            @Valid @RequestBody FranchiseNameUpdateRequest request);
 }

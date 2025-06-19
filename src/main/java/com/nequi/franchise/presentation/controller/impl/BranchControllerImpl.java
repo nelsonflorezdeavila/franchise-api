@@ -1,5 +1,6 @@
 package com.nequi.franchise.presentation.controller.impl;
 
+import com.nequi.franchise.application.dto.BranchNameUpdateRequest;
 import com.nequi.franchise.application.dto.BranchRequest;
 import com.nequi.franchise.application.dto.BranchResponse;
 import com.nequi.franchise.application.service.BranchService;
@@ -65,5 +66,13 @@ public class BranchControllerImpl implements BranchController {
     public Mono<ResponseEntity<ApiResponse<Void>>> deleteBranch(@PathVariable String id) {
         return branchService.delete(id)
                 .then(Mono.just(customResponseBuilder.deleted("branch.deleted")));
+    }
+
+    @Override
+    @PatchMapping("/branches/{id}/name")
+    public Mono<ResponseEntity<ApiResponse<BranchResponse>>> updateBranchName(@PathVariable String id, BranchNameUpdateRequest request) {
+        return branchService.updateName(id, request)
+                .map(branch -> customResponseBuilder.success(branch, "branch.name.updated"))
+                .defaultIfEmpty(customResponseBuilder.notFound());
     }
 }

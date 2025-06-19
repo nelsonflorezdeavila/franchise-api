@@ -1,6 +1,7 @@
 package com.nequi.franchise.domain.repository;
 
 import com.nequi.franchise.domain.model.ProductStock;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,14 @@ public interface ProductStockRepository extends ReactiveMongoRepository<ProductS
 
     @Query("{ 'stock' : { $lt : '$minStock' } }")
     Flux<ProductStock> findByStockLessThanMinStock();
+
+    @Aggregation(pipeline = {
+            "{ $lookup: { from: 'branches', localField: 'branchId', foreignField: '_id', as: 'branch' } }",
+            "{ $unwind: '$branch' }",
+            "{ $match: { 'branch.franchiseId': ?0 } }",
+            "{ $sort: { 'branchId': 1, 'stock': -1 } }",
+            "{ $group: { _id: '$branchId', maxStockProduct: { $first: '$$ROOT' } } }",
+            "{ $replaceRoot: { newRoot: '$maxStockProduct' } }"
+    })
+    Flux<ProductStock> findTopStockProductByBranchForFranchise(String franchiseId);
 }

@@ -1,5 +1,6 @@
 package com.nequi.franchise.application.service;
 
+import com.nequi.franchise.application.dto.BranchNameUpdateRequest;
 import com.nequi.franchise.application.dto.BranchRequest;
 import com.nequi.franchise.application.dto.BranchResponse;
 import reactor.core.publisher.Flux;
@@ -60,4 +61,13 @@ public interface BranchService {
      * @return a Mono signaling completion
      */
     Mono<Void> delete(String id);
+
+    /**
+     * Update the name of an existing branch.
+     *
+     * @param id the branch ID to update
+     * @param request the branch name update request
+     * @return a Mono containing the updated branch response
+     */
+    Mono<BranchResponse> updateName(String id, BranchNameUpdateRequest request);
 }
