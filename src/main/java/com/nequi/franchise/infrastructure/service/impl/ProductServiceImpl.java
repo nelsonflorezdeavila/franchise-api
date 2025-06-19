@@ -139,4 +139,18 @@ public class ProductServiceImpl implements ProductService {
                 branchRepository.findById(productStock.getBranchId())
         ).map(tuple -> productStockMapper.toResponse(productStock, tuple.getT1(), tuple.getT2()));
     }
+
+    @Override
+    public Mono<Void> removeProductFromBranch(String productId, String branchId) {
+        return Mono.zip(
+                        productRepository.findById(productId)
+                                .switchIfEmpty(Mono.error(new RuntimeException("Product not found"))),
+                        branchRepository.findById(branchId)
+                                .switchIfEmpty(Mono.error(new RuntimeException("Branch not found")))
+                )
+                .then(productStockRepository.findByProductIdAndBranchId(productId, branchId))
+                .switchIfEmpty(Mono.error(new RuntimeException("Product is not associated with this branch")))
+                .flatMap(productStockRepository::delete)
+                .then();
+    }
 }
