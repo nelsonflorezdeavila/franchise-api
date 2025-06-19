@@ -7,6 +7,7 @@ import com.nequi.franchise.infrastructure.dto.ApiResponse;
 import com.nequi.franchise.infrastructure.utils.CustomResponseBuilder;
 import com.nequi.franchise.presentation.controller.FranchiseController;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/franchises")
 @RequiredArgsConstructor
+@Slf4j
 public class FranchiseControllerImpl implements FranchiseController {
 
     private final FranchiseService franchiseService;

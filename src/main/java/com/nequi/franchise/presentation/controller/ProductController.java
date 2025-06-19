@@ -193,4 +193,29 @@ public interface ProductController {
             @PathVariable String productId,
             @Parameter(description = "api.product.getStock.param.branchId", required = true)
             @PathVariable String branchId);
+
+    @LogExecution("Remove product from branch")
+    @Operation(
+            summary = "api.product.removeFromBranch.summary",
+            description = "api.product.removeFromBranch.description"
+    )
+    @ApiResponses(value = {
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "200",
+                    description = "api.response.success"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "404",
+                    description = "api.response.notfound"
+            ),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(
+                    responseCode = "500",
+                    description = "api.response.servererror"
+            )
+    })
+    Mono<ResponseEntity<ApiResponse<Void>>> removeProductFromBranch(
+            @Parameter(description = "api.product.removeFromBranch.param.branchId", required = true)
+            @PathVariable String branchId,
+            @Parameter(description = "api.product.removeFromBranch.param.productId", required = true)
+            @PathVariable String productId);
 }

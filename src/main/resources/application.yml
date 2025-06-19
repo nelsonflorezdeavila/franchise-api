@@ -13,18 +13,29 @@ spring:
     cache-duration: 3600
     fallback-to-system-locale: true
   jackson:
-    serialization:
-      write-dates-as-timestamps: false
-      write-durations-as-timestamps: false
-      indent-output: true
-      fail-on-empty-beans: false
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+    time-zone: "America/Bogota"
     deserialization:
       fail-on-unknown-properties: false
       accept-float-as-int: false
+    serialization:
+      write-dates-as-timestamps: false
     default-property-inclusion: non_null
-    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
-    time-zone: America/Bogota
-    property-naming-strategy: SNAKE_CASE
+#  jackson:
+#    serialization:
+#      write-dates-as-timestamps: false
+#      write-durations-as-timestamps: false
+#      indent-output: true
+#      fail-on-empty-beans: false
+#    deserialization:
+#      fail-on-unknown-properties: false
+#      accept-float-as-int: false
+#    default-property-inclusion: non_null
+#    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+#    time-zone: America/Bogota
+    #property-naming-strategy: SNAKE_CASE
+    parser:
+      include-source-in-location: true
 server:
   servlet:
     encoding:

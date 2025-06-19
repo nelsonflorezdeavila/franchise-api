@@ -73,4 +73,11 @@ public class ProductControllerImpl implements ProductController {
                 .map(customResponseBuilder::success)
                 .defaultIfEmpty(customResponseBuilder.notFound());
     }
+
+    @Override
+    @DeleteMapping("/branches/{branchId}/products/{productId}")
+    public Mono<ResponseEntity<ApiResponse<Void>>> removeProductFromBranch(@PathVariable String branchId, @PathVariable String productId) {
+        return productService.removeProductFromBranch(productId, branchId)
+                .then(Mono.just(customResponseBuilder.deleted("product.removed.from.branch")));
+    }
 }

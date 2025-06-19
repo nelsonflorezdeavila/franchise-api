@@ -29,4 +29,6 @@ public interface ProductService {
     Mono<ProductStockResponse> getProductStockByBranch(String productId, String branchId);
 
     Flux<ProductStockResponse> getLowStockProducts();
+
+    Mono<Void> removeProductFromBranch(String productId, String branchId);
 }
